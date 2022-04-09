@@ -8,7 +8,7 @@ require('dotenv').config();
 
 const app = express();
 const PORT: number = +(process.env.PORT || 3001);
-const HOST: string = process.env.HOST || '127.0.0.1';
+const HOST: string = process.env.HOST || '0.0.0.0';
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
@@ -24,6 +24,7 @@ app.use(express.urlencoded());
 // ROUTING
 router(app);
 
+//DATABASE
 connectDB();
 
 app.listen(PORT, HOST, () => {
