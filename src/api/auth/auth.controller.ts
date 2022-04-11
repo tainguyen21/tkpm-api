@@ -26,7 +26,7 @@ const authController = {
         const { password, ...userInfo } = user;
 
         const accessToken = await createToken(userInfo, process.env.SECRET_KEY!, '14d');
-        return SuccessResponse(res, { userInfo, accessToken });
+        return SuccessResponse(res, { user: userInfo, accessToken });
       }
 
       return BadRequestResponse(res, 'Mật khẩu không chính xác');
