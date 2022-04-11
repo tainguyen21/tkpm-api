@@ -8,12 +8,17 @@ export interface IUser {
   isAdmin: boolean;
 }
 
-const UserSchema = new Schema<IUser>({
-  fullName: { type: String },
-  phone: { type: String, required: true },
-  password: { type: String, required: true },
-  isAdmin: { type: Boolean, default: false },
-});
+const UserSchema = new Schema<IUser>(
+  {
+    fullName: { type: String },
+    phone: { type: String, required: true },
+    password: { type: String, required: true },
+    isAdmin: { type: Boolean, default: false },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 const User = model('User', UserSchema);
 
