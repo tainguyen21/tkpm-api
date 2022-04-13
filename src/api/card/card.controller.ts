@@ -15,6 +15,16 @@ const cardController = {
     }
   },
 
+  async getById(req: Request, res: Response) {
+    try {
+      const cards = await getCard({ _id: req.params.id });
+
+      return SuccessResponse(res, cards);
+    } catch (e: any) {
+      return ErrorResponse(res, e.message);
+    }
+  },
+
   async post(req: Request, res: Response) {
     let body = req.body as CreateInput<ICard>;
     try {

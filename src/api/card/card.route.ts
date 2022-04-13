@@ -7,9 +7,10 @@ const router = Router();
 
 const jwt_auth = passport.authenticate('jwt', { session: false });
 
-router.get('/languages', [jwt_auth], cardController.get);
-router.post('/languages', [jwt_auth, adminRole], cardController.post);
-router.put('/languages/:id', [jwt_auth, adminRole], cardController.put);
-router.delete('/languages/:id', [jwt_auth, adminRole], cardController.delete);
+router.get('/card', [jwt_auth], cardController.get);
+router.get('/card/:id', cardController.getById);
+router.post('/card', [jwt_auth, adminRole], cardController.post);
+router.put('/card/:id', [jwt_auth, adminRole], cardController.put);
+router.delete('/card/:id', [jwt_auth, adminRole], cardController.delete);
 
 module.exports = router;
