@@ -1,7 +1,13 @@
 import { ICategory } from '../../models/Category';
 import { Request, Response } from 'express';
 import { CreateInput, UpdateInput } from '../../common/interfaces';
-import { CreatedResponse, ErrorResponse, NotFoundResponse, SuccessResponse } from '../../helpers';
+import {
+  BadRequestResponse,
+  CreatedResponse,
+  ErrorResponse,
+  NotFoundResponse,
+  SuccessResponse,
+} from '../../helpers';
 import {
   createCategory,
   deleteCategory,
@@ -24,6 +30,10 @@ const categoryController = {
   async post(req: Request, res: Response) {
     let body = req.body as CreateInput<ICategory>;
     try {
+      let existed = await getCategory({ name: body.name });
+
+      if (existed) return BadRequestResponse(res, 'Thể loại đã tồn tại');
+
       let category = await createCategory(body);
 
       if (!category) return ErrorResponse(res, 'Tạo không thành công');
