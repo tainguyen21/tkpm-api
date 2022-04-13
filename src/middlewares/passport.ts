@@ -1,3 +1,5 @@
+import { Request } from 'express';
+import { VerifyCallback } from 'jsonwebtoken';
 import { PassportStatic } from 'passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import User from '../models/User';
@@ -11,15 +13,15 @@ const passportJwt = (passport: PassportStatic) =>
         algorithms: ['HS256'],
         passReqToCallback: true,
       },
-      (jwt_payload, done) => {
+      (_: Request, jwt_payload: any, done: VerifyCallback) => {
         User.findById(jwt_payload._id)
           .exec()
           .then((user) => {
-            if (!user) return done(null, false);
+            if (!user) return done(null, undefined);
 
             return done(null, user);
           })
-          .catch((err) => done(err, false));
+          .catch((err) => done(err, undefined));
       }
     )
   );
