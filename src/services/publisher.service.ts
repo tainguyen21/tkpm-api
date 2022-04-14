@@ -44,5 +44,5 @@ export async function deletePublisher(filter: FilterQuery<IPublisher>) {
 
   if (publisher) await Publisher.deleteOne({ _id: publisher._id });
 
-  return Publisher;
+  return publisher;
 }

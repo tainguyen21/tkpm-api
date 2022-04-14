@@ -52,6 +52,7 @@ const publisherController = {
 
   async delete(req: Request, res: Response) {
     let id = req.params.id;
+
     try {
       let publisher = await deletePublisher({ _id: id });
 
