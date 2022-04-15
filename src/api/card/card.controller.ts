@@ -1,7 +1,13 @@
 import { ICard } from '../../models/Card';
 import { Request, Response } from 'express';
 import { CreateInput, UpdateInput } from '../../common/interfaces';
-import { CreatedResponse, ErrorResponse, NotFoundResponse, SuccessResponse } from '../../helpers';
+import {
+  BadRequestResponse,
+  CreatedResponse,
+  ErrorResponse,
+  NotFoundResponse,
+  SuccessResponse,
+} from '../../helpers';
 import { createCard, deleteCard, getCard, getCards, updateCard } from '../../services/card.service';
 
 const cardController = {
@@ -28,6 +34,10 @@ const cardController = {
   async post(req: Request, res: Response) {
     let body = req.body as CreateInput<ICard>;
     try {
+      let existedCard = await getCard({ user: body.user });
+
+      if (existedCard) return BadRequestResponse(res, 'Người dùng đã có thẻ');
+
       let card = await createCard(body);
 
       if (!card) return ErrorResponse(res, 'Tạo không thành công');
