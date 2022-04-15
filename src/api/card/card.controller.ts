@@ -74,6 +74,11 @@ const cardController = {
       let card = await getCard({ _id: id });
       if (!card) return NotFoundResponse(res, 'Không tìm thấy thẻ');
 
+      let rule = await getRule();
+
+      if (rule && moment(body.expiredAt) > moment().add(rule.maxCardDate, 'day'))
+        return BadRequestResponse(res, 'Ngày vượt quá giới hạn');
+
       if (body.user) {
         delete body.user;
       }
