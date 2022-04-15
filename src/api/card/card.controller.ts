@@ -15,7 +15,14 @@ import { moment } from '../../configs/moment';
 const cardController = {
   async get(_: Request, res: Response) {
     try {
-      const cards = await getCards();
+      const cards = await getCards(
+        {},
+        {
+          populate: {
+            path: 'user',
+          },
+        }
+      );
 
       return SuccessResponse(res, cards);
     } catch (e: any) {
