@@ -9,6 +9,8 @@ import {
   SuccessResponse,
 } from '../../helpers';
 import { createCard, deleteCard, getCard, getCards, updateCard } from '../../services/card.service';
+import { getRule } from '../../services/rule.service';
+import { moment } from '../../configs/moment';
 
 const cardController = {
   async get(_: Request, res: Response) {
@@ -38,7 +40,16 @@ const cardController = {
 
       if (existedCard) return BadRequestResponse(res, 'Người dùng đã có thẻ');
 
-      let card = await createCard(body);
+      let rule = await getRule();
+
+      if (rule) {
+        body.expiredAt = moment().add(rule.maxCardDate, 'day').toDate();
+      }
+
+      let card = await createCard({
+        user: body.user,
+        expiredAt: body.expiredAt,
+      });
 
       if (!card) return ErrorResponse(res, 'Tạo không thành công');
 
@@ -51,9 +62,14 @@ const cardController = {
   async put(req: Request, res: Response) {
     let id = req.params.id;
     let body = req.body as UpdateInput<ICard>;
+
     try {
       let card = await getCard({ _id: id });
-      if (!card) return NotFoundResponse(res, 'Không tìm thấy ngôn ngữa');
+      if (!card) return NotFoundResponse(res, 'Không tìm thấy thẻ');
+
+      if (body.user) {
+        delete body.user;
+      }
 
       // if update service
       card = await updateCard({ _id: id }, body);
