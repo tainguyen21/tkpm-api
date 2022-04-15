@@ -86,6 +86,15 @@ const cardController = {
       // if update service
       card = await updateCard({ _id: id }, body);
 
+      card = await getCard(
+        { _id: id },
+        {
+          populate: {
+            path: 'user',
+          },
+        }
+      );
+
       return CreatedResponse(res, card);
     } catch (e: any) {
       ErrorResponse(res, e.message);
