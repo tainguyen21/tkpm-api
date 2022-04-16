@@ -60,6 +60,8 @@ const cardController = {
 
       if (!card) return ErrorResponse(res, 'Tạo không thành công');
 
+      card = await getCard({ _id: card._id }, { populate: { path: 'user' } });
+
       return CreatedResponse(res, card);
     } catch (e: any) {
       return ErrorResponse(res, e.message);
