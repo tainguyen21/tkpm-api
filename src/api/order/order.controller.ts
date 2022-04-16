@@ -115,14 +115,11 @@ const orderController = {
       if (rule && moment(body.expiredAt) > moment().add(rule.maxDate, 'day'))
         return BadRequestResponse(res, 'Ngày vượt quá giới hạn');
 
-      let order = await updateOrder({ _id: id }, body);
+      await updateOrder({ _id: id }, body);
 
-      const returnData = await getOrder({ _id: id }, { populate: { path: 'user' } });
+      const order = await getOrder({ _id: id }, { populate: { path: 'user' } });
 
-      const details = await getOrderDetails(
-        { order: returnData!._id },
-        { populate: { path: 'book' } }
-      );
+      const details = await getOrderDetails({ order: order!._id }, { populate: { path: 'book' } });
 
       (order as any).details = details;
 
