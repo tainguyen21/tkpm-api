@@ -43,8 +43,9 @@ const orderController = {
 
       let card = await getCard({ user: body.user });
 
-      if (card && moment(card.expiredAt) < moment())
-        return BadRequestResponse(res, 'Thẻ đã hết hạn');
+      if (!card) return BadRequestResponse(res, 'Người dùng chưa có thẻ');
+
+      if (moment(card.expiredAt) < moment()) return BadRequestResponse(res, 'Thẻ đã hết hạn');
 
       let orders = await getOrders({ user: body.user, status: 'PENDING' });
       let count = 0;
