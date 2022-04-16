@@ -71,6 +71,8 @@ const orderController = {
         ...body,
         card: card._id,
       });
+
+      order = await getOrder({ _id: order?._id }, { populate: { path: 'user' } });
       let orderDetails: any[] = [];
 
       for (let book of body.books) {
@@ -115,6 +117,15 @@ const orderController = {
 
       let order = await updateOrder({ _id: id }, body);
 
+      const returnData = await getOrder({}, { populate: { path: 'user' } });
+
+      const details = await getOrderDetails(
+        { order: returnData!._id },
+        { populate: { path: 'book' } }
+      );
+
+      (order as any).details = details;
+
       return CreatedResponse(res, order);
     } catch (e: any) {
       ErrorResponse(res, e.message);
@@ -126,7 +137,14 @@ const orderController = {
 
     try {
       let detail = await getOrderDetail({ _id: detailId });
-      let order = await getOrder({ _id: id });
+      let order = await getOrder(
+        { _id: id },
+        {
+          populate: {
+            path: 'user',
+          },
+        }
+      );
 
       if (detail && detail.status === 'DONE') return BadRequestResponse(res, 'Phiếu đã được trả');
 
@@ -141,15 +159,19 @@ const orderController = {
       if (moment() > moment(order?.expiredAt))
         await updateUser({ _id: order?.user }, { isBlacklist: true });
 
-      let details = await getOrderDetails({ order: id, status: 'PENDING' });
+      let count = await getOrderDetails({ order: id, status: 'PENDING' });
 
-      if (details.length === 0)
+      if (count.length === 0)
         await updateOrder(
           { _id: id },
           {
             status: moment() > moment(order!.expiredAt) ? 'OVER' : 'DONE',
           }
         );
+
+      const details = await getOrderDetails({ order: order!._id }, { populate: { path: 'book' } });
+
+      (order as any).details = details;
 
       return CreatedResponse(res, order);
     } catch (e: any) {
