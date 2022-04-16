@@ -117,7 +117,7 @@ const orderController = {
 
       let order = await updateOrder({ _id: id }, body);
 
-      const returnData = await getOrder({}, { populate: { path: 'user' } });
+      const returnData = await getOrder({ _id: id }, { populate: { path: 'user' } });
 
       const details = await getOrderDetails(
         { order: returnData!._id },
