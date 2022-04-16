@@ -37,6 +37,23 @@ const bookController = {
 
       if (!book) return ErrorResponse(res, 'Tạo không thành công');
 
+      book = await getBook(
+        { _id: book._id },
+        {
+          populate: [
+            {
+              path: 'category',
+            },
+            {
+              path: 'language',
+            },
+            {
+              path: 'publisher',
+            },
+          ],
+        }
+      );
+
       return CreatedResponse(res, book);
     } catch (e: any) {
       return ErrorResponse(res, e.message);
