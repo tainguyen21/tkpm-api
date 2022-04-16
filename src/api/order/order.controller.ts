@@ -4,6 +4,7 @@ import { moment } from '../../configs/moment';
 import { BadRequestResponse, CreatedResponse, ErrorResponse, SuccessResponse } from '../../helpers';
 import { IBook } from '../../models/Book';
 import { IOrder } from '../../models/Order';
+import { getCard } from '../../services/card.service';
 import { createOrder, getOrder, getOrders, updateOrder } from '../../services/order.service';
 import {
   createOrderDetail,
@@ -39,6 +40,11 @@ const orderController = {
 
     try {
       let rule = await getRule();
+
+      let card = await getCard({ user: body.user });
+
+      if (card && moment(card.expiredAt) < moment())
+        return BadRequestResponse(res, 'Thẻ đã hết hạn');
 
       let orders = await getOrders({ user: body.user, status: 'PENDING' });
       let count = 0;
