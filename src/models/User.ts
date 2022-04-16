@@ -7,6 +7,7 @@ export interface IUser extends Document {
   phone: string;
   password: string;
   isAdmin: boolean;
+  isBlacklist: boolean;
 }
 
 const UserSchema = new Schema<IUser>(
@@ -15,6 +16,7 @@ const UserSchema = new Schema<IUser>(
     phone: { type: String, required: true },
     password: { type: String, required: true },
     isAdmin: { type: Boolean, default: false },
+    isBlacklist: { type: Boolean, default: false },
   },
   {
     timestamps: true,

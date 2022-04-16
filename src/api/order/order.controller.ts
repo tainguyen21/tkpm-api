@@ -13,11 +13,12 @@ import {
   updateOrderDetail,
 } from '../../services/orderDetail.service';
 import { getRule } from '../../services/rule.service';
+import { getUser, updateUser } from '../../services/user.service';
 
 const orderController = {
   async get(_: Request, res: Response) {
     try {
-      const orders = await getOrders();
+      const orders = await getOrders({}, { populate: { path: 'user' } });
 
       for (let order of orders) {
         const details = await getOrderDetails({ order: order._id }, { populate: { path: 'book' } });
@@ -41,6 +42,11 @@ const orderController = {
     try {
       let rule = await getRule();
 
+      let user = await getUser({ _id: body.user });
+
+      if (user && user.isBlacklist)
+        return BadRequestResponse(res, 'Người dùng trong danh sách đen');
+
       let card = await getCard({ user: body.user });
 
       if (!card) return BadRequestResponse(res, 'Người dùng chưa có thẻ');
@@ -61,7 +67,10 @@ const orderController = {
 
       if (rule) body.expiredAt = moment().add(rule.maxDate, 'day').toDate();
 
-      let order = await createOrder(body);
+      let order = await createOrder({
+        ...body,
+        card: card._id,
+      });
       let orderDetails: any[] = [];
 
       for (let book of body.books) {
@@ -128,6 +137,9 @@ const orderController = {
           receivedDate: moment().toDate(),
         }
       );
+
+      if (moment() > moment(order?.expiredAt))
+        await updateUser({ _id: order?.user }, { isBlacklist: true });
 
       let details = await getOrderDetails({ order: id, status: 'PENDING' });
 

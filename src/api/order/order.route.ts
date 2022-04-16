@@ -11,6 +11,6 @@ router.get('/orders', [jwt_auth], orderController.get);
 router.post('/orders', [jwt_auth, adminRole], orderController.post);
 
 router.put('/orders/:id', [jwt_auth, adminRole], orderController.put);
-router.put('orders/:id/detail/:detailId', [jwt_auth, adminRole], orderController.doneDetail);
+router.put('/orders/:id/detail/:detailId', [jwt_auth, adminRole], orderController.doneDetail);
 
 module.exports = router;
