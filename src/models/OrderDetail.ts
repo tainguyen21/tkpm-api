@@ -7,8 +7,8 @@ const { Schema, model } = mongoose;
 export interface IOrderDetail extends Document {
   book: IBook['_id'];
   order: IOrder['_id'];
-  status: 'PENDING' | 'DONE';
-  receivedDate: Date;
+  status?: 'PENDING' | 'DONE';
+  receivedDate?: Date;
 }
 
 const OrderDetailSchema = new Schema<IOrderDetail>(

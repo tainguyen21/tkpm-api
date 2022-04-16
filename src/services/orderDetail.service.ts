@@ -35,11 +35,11 @@ export function updateOrderDetail(
 }
 
 export async function deleteOrderDetails(filter: FilterQuery<IOrderDetail>) {
-  let OrderDetails = await getOrderDetails(filter);
+  let orderDetails = await getOrderDetails(filter);
 
   await OrderDetail.deleteMany(filter);
 
-  return OrderDetails;
+  return orderDetails;
 }
 
 export async function deleteOrderDetail(filter: FilterQuery<IOrderDetail>) {
