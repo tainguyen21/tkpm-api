@@ -23,7 +23,6 @@ const userController = {
       let user = await getUser({ _id: id });
       if (!user) return NotFoundResponse(res, 'Không tìm thấy người dùng');
 
-      // if update service
       user = await updateUser({ _id: id }, body);
 
       return CreatedResponse(res, user);

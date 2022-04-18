@@ -16,9 +16,14 @@ import { getRule } from '../../services/rule.service';
 import { getUser, updateUser } from '../../services/user.service';
 
 const orderController = {
-  async get(_: Request, res: Response) {
+  async get(req: Request, res: Response) {
     try {
-      const orders = await getOrders({}, { populate: { path: 'user' } });
+      const query: any = {};
+      const { user } = req.query;
+
+      if (user) query.user = user;
+
+      const orders = await getOrders(query, { populate: { path: 'user' } });
 
       for (let order of orders) {
         const details = await getOrderDetails({ order: order._id }, { populate: { path: 'book' } });
