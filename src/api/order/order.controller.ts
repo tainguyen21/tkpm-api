@@ -164,7 +164,7 @@ const orderController = {
       let count = await getOrderDetails({ order: id, status: 'PENDING' });
 
       if (count.length === 0)
-        await updateOrder(
+        order = await updateOrder(
           { _id: id },
           {
             status: moment() > moment(order!.expiredAt) ? 'OVER' : 'DONE',
