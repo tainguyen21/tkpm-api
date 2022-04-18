@@ -150,7 +150,7 @@ const orderController = {
 
       if (detail && detail.status === 'DONE') return BadRequestResponse(res, 'Phiếu đã được trả');
 
-      detail = await updateOrderDetail(
+      await updateOrderDetail(
         { _id: detailId },
         {
           status: 'DONE',
@@ -164,12 +164,14 @@ const orderController = {
       let count = await getOrderDetails({ order: id, status: 'PENDING' });
 
       if (count.length === 0)
-        order = await updateOrder(
+        await updateOrder(
           { _id: id },
           {
             status: moment() > moment(order!.expiredAt) ? 'OVER' : 'DONE',
           }
         );
+
+      order = await getOrder({ _id: order?._id });
 
       const details = await getOrderDetails({ order: order!._id }, { populate: { path: 'book' } });
 
