@@ -3,26 +3,55 @@ import { Request, Response } from 'express';
 import { CreateInput, UpdateInput } from '../../common/interfaces';
 import { CreatedResponse, ErrorResponse, NotFoundResponse, SuccessResponse } from '../../helpers';
 import { createBook, deleteBook, getBook, getBooks, updateBook } from '../../services/book.service';
+import { FilterQuery } from 'mongoose';
+import { moment } from '../../configs/moment';
 
 const bookController = {
-  async get(_: Request, res: Response) {
+  async get(req: Request, res: Response) {
     try {
-      const books = await getBooks(
-        {},
-        {
-          populate: [
-            {
-              path: 'category',
-            },
-            {
-              path: 'language',
-            },
-            {
-              path: 'publisher',
-            },
-          ],
-        }
-      );
+      const query: FilterQuery<IBook> = {};
+
+      if (req.query.name) {
+        query.name = new RegExp(req.query.name as string, 'i');
+      }
+
+      if (req.query.category) {
+        query.category = req.query.category;
+      }
+
+      if (req.query.publishDate) {
+        query.publishDate = req.query.publishDate;
+      }
+
+      if (req.query.authorName) {
+        query.authorName = new RegExp(req.query.authorName as string, 'i');
+      }
+
+      if (req.query.description) {
+        query.description = new RegExp(req.query.description as string, 'i');
+      }
+
+      if (req.query.language) {
+        query.language = req.query.language;
+      }
+
+      if (req.query.publisher) {
+        query.publisher = req.query.publisher;
+      }
+
+      const books = await getBooks(query, {
+        populate: [
+          {
+            path: 'category',
+          },
+          {
+            path: 'language',
+          },
+          {
+            path: 'publisher',
+          },
+        ],
+      });
 
       return SuccessResponse(res, books);
     } catch (e: any) {
@@ -33,6 +62,8 @@ const bookController = {
   async post(req: Request, res: Response) {
     let body = req.body as CreateInput<IBook>;
     try {
+      body.publishDate = moment(body.publishDate).startOf('day').toDate();
+
       let book = await createBook(body);
 
       if (!book) return ErrorResponse(res, 'Tạo không thành công');
