@@ -101,6 +101,23 @@ const bookController = {
       // if update service
       book = await updateBook({ _id: id }, body);
 
+      book = await getBook(
+        { _id: id },
+        {
+          populate: [
+            {
+              path: 'category',
+            },
+            {
+              path: 'language',
+            },
+            {
+              path: 'publisher',
+            },
+          ],
+        }
+      );
+
       return CreatedResponse(res, book);
     } catch (e: any) {
       ErrorResponse(res, e.message);
