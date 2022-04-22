@@ -14,6 +14,7 @@ export interface IBook extends Document {
   stock: number;
   language: ILanguage['_id'];
   publisher: IPublisher['_id'];
+  url: string;
 }
 
 const BookSchema = new Schema<IBook>(
@@ -26,6 +27,7 @@ const BookSchema = new Schema<IBook>(
     stock: { type: Number, required: true },
     language: { type: Schema.Types.ObjectId, ref: 'Language', required: true },
     publisher: { type: Schema.Types.ObjectId, ref: 'Publisher', required: true },
+    url: { type: String },
   },
   {
     timestamps: true,
