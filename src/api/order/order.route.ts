@@ -8,6 +8,7 @@ const router = Router();
 const jwt_auth = passport.authenticate('jwt', { session: false });
 
 router.get('/orders', [jwt_auth], orderController.get);
+router.get('/orders/statistic', [jwt_auth], orderController.getStatistic);
 router.post('/orders', [jwt_auth, adminRole], orderController.post);
 
 router.put('/orders/:id', [jwt_auth, adminRole], orderController.put);

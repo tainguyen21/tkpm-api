@@ -37,6 +37,30 @@ const orderController = {
     }
   },
 
+  async getStatistic(req: Request, res: Response) {
+    try {
+      const type: any = req.query;
+
+      const start =
+        type === 'week' ? moment().startOf('week').toDate() : moment().startOf('month').toDate();
+      const end =
+        type === 'week' ? moment().endOf('week').toDate() : moment().endOf('month').toDate();
+
+      const orders = await getOrderDetails({
+        createdAt: {
+          $gt: start,
+          $lt: end,
+        },
+      });
+
+      return SuccessResponse(res, {
+        count: orders.length,
+      });
+    } catch (e: any) {
+      return ErrorResponse(res, e.message);
+    }
+  },
+
   async post(req: Request, res: Response) {
     let body = req.body as CreateInput<
       IOrder & {
