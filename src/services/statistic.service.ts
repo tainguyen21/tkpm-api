@@ -1,36 +1,27 @@
-import Order from '../models/Order';
-import OrderDetail from '../models/OrderDetail';
+import Book from '../models/Book';
+import User from '../models/User';
 
 /* Book */
 export async function getStatisticBooks(limit: number = 10, sort: 1 | -1 = 1) {
-  return OrderDetail.aggregate([
+  return Book.aggregate([
     {
       $lookup: {
-        from: 'books',
-        localField: 'book',
-        foreignField: '_id',
-        as: 'book',
+        from: 'orderdetails',
+        localField: '_id',
+        foreignField: 'book',
+        as: 'details',
       },
     },
     {
-      $match: {
-        book: {
-          $exists: true,
-          $ne: [],
-        },
-      },
-    },
-    {
-      $group: {
-        _id: '$book',
-        count: {
-          $sum: 1,
+      $addFields: {
+        total: {
+          $size: '$details',
         },
       },
     },
     {
       $sort: {
-        count: sort,
+        total: sort,
       },
     },
     {
@@ -39,27 +30,27 @@ export async function getStatisticBooks(limit: number = 10, sort: 1 | -1 = 1) {
   ]);
 }
 export async function getStatisticUsers(limit: number = 10, sort: 1 | -1 = 1) {
-  return Order.aggregate([
+  return User.aggregate([
+    {
+      $lookup: {
+        from: 'orders',
+        localField: '_id',
+        foreignField: 'user',
+        as: 'orders',
+      },
+    },
     {
       $lookup: {
         from: 'orderdetails',
-        localField: '_id',
+        localField: 'orders._id',
         foreignField: 'order',
-        as: 'orderItems',
+        as: 'orderDetails',
       },
     },
     {
       $addFields: {
         total: {
-          $size: '$orderItems',
-        },
-      },
-    },
-    {
-      $group: {
-        _id: '$user',
-        count: {
-          $sum: '$total',
+          $size: '$orderDetails',
         },
       },
     },

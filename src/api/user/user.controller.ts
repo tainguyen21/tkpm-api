@@ -1,6 +1,12 @@
 import { Request, Response } from 'express';
 import { UpdateInput } from '../../common/interfaces';
-import { CreatedResponse, ErrorResponse, NotFoundResponse, SuccessResponse } from '../../helpers';
+import {
+  BadRequestResponse,
+  CreatedResponse,
+  ErrorResponse,
+  NotFoundResponse,
+  SuccessResponse,
+} from '../../helpers';
 import { deleteUser, getUser, getUsers, updateUser } from '../../services/user.service';
 import { IUser } from './../../models/User';
 
@@ -22,6 +28,10 @@ const userController = {
     try {
       let user = await getUser({ _id: id });
       if (!user) return NotFoundResponse(res, 'Không tìm thấy người dùng');
+
+      if (body.phone && (await getUser({ phone: body.phone }))) {
+        return BadRequestResponse(res, 'Số điện thoại đã được đăng ký');
+      }
 
       user = await updateUser({ _id: id }, body);
 
