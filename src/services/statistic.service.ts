@@ -56,6 +56,14 @@ export async function getStatisticUsers(limit: number = 10, sort: 1 | -1 = 1) {
       },
     },
     {
+      $group: {
+        _id: '$user',
+        count: {
+          $sum: '$total',
+        },
+      },
+    },
+    {
       $sort: {
         total: sort,
       },
