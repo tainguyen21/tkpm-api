@@ -8,11 +8,15 @@ export interface IUser extends Document {
   password: string;
   isAdmin: boolean;
   isBlacklist: boolean;
+  birthDate?: Date;
+  email?: string;
 }
 
 const UserSchema = new Schema<IUser>(
   {
     fullName: { type: String },
+    birthDate: { type: Date },
+    email: { type: String },
     phone: { type: String, required: true },
     password: { type: String, required: true },
     isAdmin: { type: Boolean, default: false },
