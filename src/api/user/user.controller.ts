@@ -9,6 +9,7 @@ import {
 } from '../../helpers';
 import { deleteUser, getUser, getUsers, updateUser } from '../../services/user.service';
 import { IUser } from './../../models/User';
+import { moment } from '../../configs/moment';
 
 const userController = {
   async get(_: Request, res: Response) {
@@ -32,6 +33,8 @@ const userController = {
       if (body.phone && (await getUser({ phone: body.phone, _id: { $ne: id } }))) {
         return BadRequestResponse(res, 'Số điện thoại đã được đăng ký');
       }
+
+      if (body.birthDate) body.birthDate = moment(body.birthDate).toDate();
 
       user = await updateUser({ _id: id }, body);
 
