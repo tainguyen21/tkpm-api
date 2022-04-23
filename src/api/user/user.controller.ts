@@ -29,7 +29,7 @@ const userController = {
       let user = await getUser({ _id: id });
       if (!user) return NotFoundResponse(res, 'Không tìm thấy người dùng');
 
-      if (body.phone && (await getUser({ phone: body.phone }))) {
+      if (body.phone && (await getUser({ phone: body.phone, _id: { $ne: id } }))) {
         return BadRequestResponse(res, 'Số điện thoại đã được đăng ký');
       }
 

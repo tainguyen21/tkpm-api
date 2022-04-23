@@ -4,6 +4,7 @@ import { moment } from '../../configs/moment';
 import { BadRequestResponse, CreatedResponse, ErrorResponse, SuccessResponse } from '../../helpers';
 import { IBook } from '../../models/Book';
 import { IOrder } from '../../models/Order';
+import { getBook, updateBook } from '../../services/book.service';
 import { getCard } from '../../services/card.service';
 import { createOrder, getOrder, getOrders, updateOrder } from '../../services/order.service';
 import {
@@ -104,11 +105,16 @@ const orderController = {
       order = await getOrder({ _id: order?._id }, { populate: { path: 'user' } });
       let orderDetails: any[] = [];
 
-      for (let book of body.books) {
+      for (let bookId of body.books) {
+        let book = await getBook({ _id: bookId });
+        if (book?.stock === 0) continue;
+
         let orderDetail = await createOrderDetail({
-          book: book,
+          book: bookId,
           order: order?._id,
         });
+
+        await updateBook({ _id: bookId }, { stock: book!.stock - 1 });
 
         orderDetail = await getOrderDetail(
           { _id: orderDetail?._id },
